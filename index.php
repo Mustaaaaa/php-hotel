@@ -42,6 +42,21 @@ $hotels = [
 // foreach ($hotels as $hotel) {
 //     echo $hotel['name'] . ' - ' . $hotel['description'] . ' - ' . $hotel['vote'] . ' - ' . $hotel['distance_to_center'] . '<br/>';
 // }
+
+$filtered_hotels = $hotels;
+
+if (isset($_GET['parking'])) {
+    $parking_filter = $_GET['parking'];
+    if ($parking_filter == '1') {
+        $filtered_hotels = array_filter($filtered_hotels, function ($hotel) {
+            return $hotel['parking'] == true;
+        });
+    } elseif ($parking_filter == '0') {
+        $filtered_hotels = array_filter($filtered_hotels, function ($hotel) {
+            return $hotel['parking'] == false;
+        });
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,6 +71,17 @@ $hotels = [
 <body>
     <div class="container">
         <h1>PHP Hotel</h1>
+        <form method="get">
+            <div class="pb-3">
+                <label for="parking_filter">Filter by Parking:</label>
+                <select name="parking" id="parking_filter" class="form-select">
+                    <option value="">All</option>
+                    <option value="1" <?php echo $_GET['parking'] == '1' ? 'selected' : '' ?>>With Parking</option>
+                    <option value="0" <?php echo $_GET['parking'] == '0' ? 'selected' : '' ?>>Without Parking</option>
+                </select>
+            </div>
+            <button class="btn btn-danger">Apply</button>
+        </form>
         <table class="table">
             <thead>
                 <tr>
@@ -67,7 +93,7 @@ $hotels = [
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($hotels as $hotel) : ?>
+                <?php foreach ($filtered_hotels as $hotel) : ?>
                     <tr>
                         <td><?php echo $hotel['name'] ?></td>
                         <td><?php echo $hotel['description'] ?></td>
